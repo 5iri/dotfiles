@@ -1,9 +1,7 @@
 # This is the configuration file for Ghostty.
 #
-# This template file has been automatically created at the following
-# path since Ghostty couldn't find any existing config files on your system:
-#
-#   /Users/apple/Library/Application Support/com.mitchellh.ghostty/config
+# This template file has been automatically created because Ghostty
+# couldn't find any existing config files on the system.
 #
 # The template does not set any default options, since Ghostty ships
 # with sensible defaults for all options. Users should only need to set

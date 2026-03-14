@@ -49,6 +49,32 @@ zstyle ':completion:*' matcher-list 'm:{a-z}={A-Z}' 'r:|[._-]=* r:|=*'
 autoload -Uz colors
 colors
 
+##### Optional plugins #####
+
+for plugin_file in \
+  /usr/share/zsh/plugins/zsh-autosuggestions/zsh-autosuggestions.zsh \
+  /usr/share/zsh-autosuggestions/zsh-autosuggestions.zsh \
+  /opt/homebrew/share/zsh-autosuggestions/zsh-autosuggestions.zsh \
+  /usr/local/share/zsh-autosuggestions/zsh-autosuggestions.zsh
+do
+  if [ -f "$plugin_file" ]; then
+    source "$plugin_file"
+    break
+  fi
+done
+
+for plugin_file in \
+  /usr/share/zsh/plugins/zsh-history-substring-search/zsh-history-substring-search.zsh \
+  /usr/share/zsh-history-substring-search/zsh-history-substring-search.zsh \
+  /opt/homebrew/share/zsh-history-substring-search/zsh-history-substring-search.zsh \
+  /usr/local/share/zsh-history-substring-search/zsh-history-substring-search.zsh
+do
+  if [ -f "$plugin_file" ]; then
+    source "$plugin_file"
+    break
+  fi
+done
+
 
 ##### Prompt (only "> " and nothing else) #####
 
@@ -76,8 +102,13 @@ fi
 bindkey -e  # Emacs-style keybindings
 
 # Up/Down search history by the prefix you've typed
-bindkey '^[[A' history-beginning-search-backward
-bindkey '^[[B' history-beginning-search-forward
+if typeset -f history-substring-search-up >/dev/null 2>&1; then
+  bindkey '^[[A' history-substring-search-up
+  bindkey '^[[B' history-substring-search-down
+else
+  bindkey '^[[A' history-beginning-search-backward
+  bindkey '^[[B' history-beginning-search-forward
+fi
 
 ##### Aliases & helpers #####
 
@@ -100,10 +131,19 @@ alias gp='git push'
 alias ginit='git init'
 
 # Open remote repo in browser at current branch
-alias gop='open "$(git remote get-url origin | sed -e "s|git@\(.*\):\(.*\)\.git|https://\1/\2|" -e "s|\.git$||")/tree/$(git rev-parse --abbrev-ref HEAD)"'
+if command -v open >/dev/null 2>&1; then
+  alias gop='open "$(git remote get-url origin | sed -e "s|git@\(.*\):\(.*\)\.git|https://\1/\2|" -e "s|\.git$||")/tree/$(git rev-parse --abbrev-ref HEAD)"'
+elif command -v xdg-open >/dev/null 2>&1; then
+  alias gop='xdg-open "$(git remote get-url origin | sed -e "s|git@\(.*\):\(.*\)\.git|https://\1/\2|" -e "s|\.git$||")/tree/$(git rev-parse --abbrev-ref HEAD)" >/dev/null 2>&1'
+fi
 
 # ESP-IDF
-alias get_idf='. /Users/apple/esp/esp-idf/export.sh'
+if [ -f "$HOME/esp/esp-idf/export.sh" ]; then
+  alias get_idf='. "$HOME/esp/esp-idf/export.sh"'
+fi
+
+# Vivado
+alias vivado-env='[ -n "${VIVADO_ROOT:-}" ] && [ -f "$VIVADO_ROOT/settings64.sh" ] && . "$VIVADO_ROOT/settings64.sh"'
 
 
 ##### Colored ls / lsd #####
@@ -132,18 +172,31 @@ if command -v rbenv >/dev/null 2>&1; then
   eval "$(rbenv init - zsh)"
 fi
 
-. "$HOME/.local/bin/env"
+if [ -f "$HOME/.local/bin/env" ]; then
+  . "$HOME/.local/bin/env"
+fi
+
 export PATH="$HOME/.cargo/bin:$PATH"
-export SSL_CERT_FILE="$(brew --prefix)/etc/ca-certificates/cert.pem"
+
+if command -v brew >/dev/null 2>&1; then
+  export SSL_CERT_FILE="$(brew --prefix)/etc/ca-certificates/cert.pem"
+fi
 
 # >>> juliaup initialize >>>
 
 # !! Contents within this block are managed by juliaup !!
 
-path=('/Users/apple/.juliaup/bin' $path)
+path=("$HOME/.juliaup/bin" $path)
 export PATH
 
 # <<< juliaup initialize <<<
 
 # opencode
-export PATH=/Users/apple/.opencode/bin:$PATH
+export PATH="$HOME/.opencode/bin:$PATH"
+export PATH="$HOME/.local/bin:$PATH"
+alias btop="btop --force-utf"
+if command -v ruby >/dev/null 2>&1; then
+  export PATH="$(ruby -r rubygems -e 'print Gem.user_dir')/bin:$PATH"
+else
+  print -u2 "ruby is not installed; install ruby to enable gem bin PATH setup"
+fi
