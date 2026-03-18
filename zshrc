@@ -145,6 +145,27 @@ fi
 # Vivado
 alias vivado-env='[ -n "${VIVADO_ROOT:-}" ] && [ -f "$VIVADO_ROOT/settings64.sh" ] && . "$VIVADO_ROOT/settings64.sh"'
 
+# Always open VS Code in the next Hyprland workspace.
+code() {
+  if [ -n "${HYPRLAND_INSTANCE_SIGNATURE:-}" ] && command -v hyprctl >/dev/null 2>&1; then
+    local current_ws target_ws
+
+    if command -v jq >/dev/null 2>&1; then
+      current_ws="$(hyprctl -j activeworkspace 2>/dev/null | jq -r '.id // empty' 2>/dev/null)"
+      if [[ "$current_ws" == <-> ]] && (( current_ws > 0 )); then
+        target_ws=$((current_ws + 1))
+      fi
+    fi
+
+    if [[ "$target_ws" == <-> ]] && (( target_ws > 0 )); then
+      hyprctl dispatch workspace "$target_ws" >/dev/null 2>&1 || true
+    else
+      hyprctl dispatch workspace r+1 >/dev/null 2>&1 || true
+    fi
+  fi
+  command code --new-window "$@"
+}
+
 
 ##### Colored ls / lsd #####
 
@@ -200,3 +221,4 @@ if command -v ruby >/dev/null 2>&1; then
 else
   print -u2 "ruby is not installed; install ruby to enable gem bin PATH setup"
 fi
+alias get_idf='. /home/lazybanana/esp/esp-idf/export.sh'
