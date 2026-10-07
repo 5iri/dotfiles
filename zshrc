@@ -3,6 +3,10 @@
 # - Minimal prompt: just a colored ">" and a space
 # - Built-in command prediction (no external plugins)
 # - Nice completion and history behavior
+# - Terminal font: Paper Mono (rendered by Ghostty, see Ghostty config)
+#   NOTE: zsh itself doesn't render fonts — the terminal emulator does.
+#   This shell is configured to work with Paper Mono in Ghostty
+#   (font-family = "Paper Mono" in Ghostty config).
 #
 
 ##### Basics #####

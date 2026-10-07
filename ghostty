@@ -25,7 +25,15 @@
 # # separated by equals signs.
 # font-family = Iosevka
 # window-padding-x = 2
-font-size = 20
+font-size = 17
+font-family = "Paper Mono"
+# Optional Paper Mono stylistic sets (uncomment to enable):
+# font-feature = +ss01  # coding ligatures
+# font-feature = +ss02  # duospace glyphs
+# font-feature = +ss03  # narrow space
+# font-feature = +ss04  # small arrows
+# font-feature = +cv01  # single-story a
+# font-feature = +zero  # slashed zero
 #
 # # Spacing around the equals sign does not matter.
 # # All of these are identical:
