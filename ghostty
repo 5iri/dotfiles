@@ -84,3 +84,14 @@ palette = 12=#7aa2f7
 palette = 13=#ff92df
 palette = 14=#9aedfe
 palette = 15=#ffffff
+
+# Neovim Command shortcuts. Forward the actual modifier using CSI-u.
+# These take precedence over Ghostty's selection-search, palette, and close-surface keys.
+# Cmd-Shift-W still closes the terminal window.
+keybind = super+p=csi:112;9u
+keybind = super+slash=csi:47;9u
+keybind = super+e=csi:101;9u
+keybind = super+shift+p=csi:112;10u
+keybind = super+s=csi:115;9u
+keybind = super+w=csi:119;9u
+keybind = super+ctrl+t=csi:116;13u
